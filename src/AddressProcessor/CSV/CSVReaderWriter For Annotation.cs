@@ -6,11 +6,16 @@ namespace AddressProcessing.CSV
     /*
         1) List three to five key concerns with this implementation that you would discuss with the junior developer. 
 
-        Please leave the rest of this file as it is so we can discuss your concerns during the next stage of the interview process.
+        Please leave the rest of this file as it is so we can discuss your concerns during the next stage of the interview process. 
         
-        *)
-        *)
-        *)
+        1) Use of SingleResponsibilityPrinciple will make the code cleaner and easier to manage.
+        2) Usage of StringBuilder instead of for loop in write method will result in better usage of memory and improve performance
+        3) Implementation through an interface will help in IOC and better unit testing
+        4) [Flags] marking is not required, as there was no bitwise operations done. In-fact we could do without the Enum as well.
+        5) Exception handling needs to be added.
+        6) Implementation of IDisposable interface will result in better mechanism for releasing unmanaged resources, will not require explicit calls to the stream close methods which could be easily forgotten at times.
+        7) Explicitly providing only 2 columns in read method is not good, when we can clearly see that csv data file contains more fields.
+        8) FIRST_COLUMN, SECOND_COLUMN constant declarations are unnecessary.
     */
 
     public class CSVReaderWriterForAnnotation

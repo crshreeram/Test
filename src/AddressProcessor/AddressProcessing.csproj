@@ -55,8 +55,16 @@
   <ItemGroup>
     <Compile Include="Address\AddressRecord.cs" />
     <Compile Include="Address\AddressFileProcessor.cs" />
+    <Compile Include="CSV\ContactsMapper.cs" />
     <Compile Include="CSV\CSVReaderWriter For Annotation.cs" />
     <Compile Include="CSV\CSVReaderWriter.cs" />
+    <Compile Include="CSV\FileReader.cs" />
+    <Compile Include="CSV\FileStore.cs" />
+    <Compile Include="CSV\FileWriter.cs" />
+    <Compile Include="CSV\IContactsMapper.cs" />
+    <Compile Include="CSV\IFileReader.cs" />
+    <Compile Include="CSV\IFileStore.cs" />
+    <Compile Include="CSV\IFileWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Address\v1\IMailShot.cs" />
     <Compile Include="Address\v2\IMailShot.cs" />

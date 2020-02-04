@@ -10,8 +10,25 @@ namespace AddressProcessing.CSV
 
     public class CSVReaderWriter
     {
-        private StreamReader _readerStream = null;
-        private StreamWriter _writerStream = null;
+        //private StreamReader _readerStream = null;
+        //private StreamWriter _writerStream = null;
+
+        private readonly IFileReader _fileReader;
+        private readonly IFileWriter _fileWriter;
+        private readonly IContactsMapper _contactsMapper;
+        public const string DELIMITER = "\t";
+
+        public CSVReaderWriter(IFileReader fileReader, IFileWriter fileWriter, IContactsMapper contactsMapper)
+        {
+            IFileStore fileStore = new FileStore();
+            _fileReader = new FileReader(fileStore);
+            _fileWriter = new FileWriter(fileStore);
+            _contactsMapper = new ContactsMapper();
+        }
+
+        public CSVReaderWriter()
+        {
+        }
 
         [Flags]
         public enum Mode { Read = 1, Write = 2 };
@@ -20,123 +37,57 @@ namespace AddressProcessing.CSV
         {
             if (mode == Mode.Read)
             {
-                _readerStream = File.OpenText(fileName);
+                _fileReader.OpenFile(fileName);
+                return;
             }
-            else if (mode == Mode.Write)
-            {
-                FileInfo fileInfo = new FileInfo(fileName);
-                _writerStream = fileInfo.CreateText();
-            }
-            else
-            {
-                throw new Exception("Unknown file mode for " + fileName);
-            }
+
+            _fileWriter.CreateFile(fileName);
         }
 
         public void Write(params string[] columns)
         {
-            string outPut = "";
+            columns = columns ?? throw new ArgumentException("The column text to write cannot be null");
 
-            for (int i = 0; i < columns.Length; i++)
-            {
-                outPut += columns[i];
-                if ((columns.Length - 1) != i)
-                {
-                    outPut += "\t";
-                }
-            }
+            var textToWriteWithSeparator = String.Join(DELIMITER, columns);
 
-            WriteLine(outPut);
+            _fileWriter.WriteLine(textToWriteWithSeparator);
         }
 
         public bool Read(string column1, string column2)
         {
-            const int FIRST_COLUMN = 0;
-            const int SECOND_COLUMN = 1;
-
-            string line;
-            string[] columns;
-
-            char[] separator = { '\t' };
-
-            line = ReadLine();
-            columns = line.Split(separator);
-
-            if (columns.Length == 0)
-            {
-                column1 = null;
-                column2 = null;
-
-                return false;
-            }
-            else
-            {
-                column1 = columns[FIRST_COLUMN];
-                column2 = columns[SECOND_COLUMN];
-
-                return true;
-            }
+            return !_fileReader.IsEndOfFile();
         }
 
-        public bool Read(out string column1, out string column2)
+        public bool Read(out string contactName, out string contactDetails)
         {
-            const int FIRST_COLUMN = 0;
-            const int SECOND_COLUMN = 1;
-
-            string line;
-            string[] columns;
-
-            char[] separator = { '\t' };
-
-            line = ReadLine();
-
-            if (line == null)
+            if (_fileReader.IsEndOfFile())
             {
-                column1 = null;
-                column2 = null;
-
+                contactName = null;
+                contactDetails = null;
                 return false;
             }
 
-            columns = line.Split(separator);
+            var contactData = _fileReader.ReadLine();
 
-            if (columns.Length == 0)
-            {
-                column1 = null;
-                column2 = null;
+            _contactsMapper.MapContactsDetailsFromContacts(out contactName, out contactDetails, contactData, DELIMITER);
 
-                return false;
-            } 
-            else
-            {
-                column1 = columns[FIRST_COLUMN];
-                column2 = columns[SECOND_COLUMN];
-
-                return true;
-            }
+            return true;
         }
 
         private void WriteLine(string line)
         {
-            _writerStream.WriteLine(line);
+            _fileWriter.WriteLine(line);
         }
 
         private string ReadLine()
         {
-            return _readerStream.ReadLine();
+            return _fileReader.ReadLine();
         }
 
         public void Close()
         {
-            if (_writerStream != null)
-            {
-                _writerStream.Close();
-            }
-
-            if (_readerStream != null)
-            {
-                _readerStream.Close();
-            }
+            _fileReader?.Dispose();
+            _fileWriter.Dispose();
         }
     }
 }

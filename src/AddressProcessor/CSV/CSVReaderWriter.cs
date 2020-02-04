@@ -10,24 +10,17 @@ namespace AddressProcessing.CSV
 
     public class CSVReaderWriter
     {
-        //private StreamReader _readerStream = null;
-        //private StreamWriter _writerStream = null;
-
         private readonly IFileReader _fileReader;
         private readonly IFileWriter _fileWriter;
         private readonly IContactsMapper _contactsMapper;
         public const string DELIMITER = "\t";
 
-        public CSVReaderWriter(IFileReader fileReader, IFileWriter fileWriter, IContactsMapper contactsMapper)
+        public CSVReaderWriter()
         {
             IFileStore fileStore = new FileStore();
             _fileReader = new FileReader(fileStore);
             _fileWriter = new FileWriter(fileStore);
             _contactsMapper = new ContactsMapper();
-        }
-
-        public CSVReaderWriter()
-        {
         }
 
         [Flags]
@@ -87,7 +80,7 @@ namespace AddressProcessing.CSV
         public void Close()
         {
             _fileReader?.Dispose();
-            _fileWriter.Dispose();
+            _fileWriter?.Dispose();
         }
     }
 }

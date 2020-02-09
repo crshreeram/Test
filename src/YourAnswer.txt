@@ -3,3 +3,22 @@ Write below your answer for the third task:
 Q: Explain what is a good software and a good code. 
 
 A: 
+A Good Software will have the below characteristics
+1. Functional or Correctness (Should do what it is intended to do)
+2. Maintainable (Should be easy to maintain)
+3. Reusability (Less code duplication and part/functionality of the code should be reusable)
+4. Reliability (The software should be realiable enough to perform the way it was intended to work without any hinderances)
+5. Portable (The architecture should make it easy for porting based on different use cases)
+6. Efficiency (The software should be efficient and perform well under stress and load)
+7. Secure
+
+
+In my opinion good code would have the below attributes
+1. Simple to read and understand.
+2. Follows good naming and coding standards.
+3. Testable
+4. maintainable
+5. Less errorprone
+6. Reusable
+7. Efficient
+8. Modular ( helps in reusability - point 6)

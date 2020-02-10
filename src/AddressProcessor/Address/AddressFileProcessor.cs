@@ -1,5 +1,5 @@
 ﻿using System;
-using AddressProcessing.Address.v1;
+using AddressProcessing.Address.v2;
 using AddressProcessing.CSV;
 
 namespace AddressProcessing.Address
@@ -7,26 +7,36 @@ namespace AddressProcessing.Address
     public class AddressFileProcessor
     {
         private readonly IMailShot _mailShot;
+        private IContactsMapper _contactsMapper;
+        private const string DELIMITER = "\t";
+        private readonly IFileReader _fileReader;
 
-        public AddressFileProcessor(IMailShot mailShot)
+        public AddressFileProcessor(IMailShot mailShot,  IContactsMapper contactsMapper, IFileReader fileReader)
         {
             if (mailShot == null) throw new ArgumentNullException("mailShot");
             _mailShot = mailShot;
+            _contactsMapper = contactsMapper;
+            _fileReader = fileReader;
         }
 
         public void Process(string inputFile)
         {
-            var reader = new CSVReaderWriter();
-            reader.Open(inputFile, CSVReaderWriter.Mode.Read);
+            _fileReader.OpenFile(inputFile);
 
-            string column1, column2;
-
-            while(reader.Read(out column1, out column2))
+            using (_fileReader)
             {
-                _mailShot.SendMailShot(column1, column2);
+                while (!_fileReader.IsEndOfFile())
+                {
+                    var fileDataLine = _fileReader.ReadLine();
+
+                    _contactsMapper.MapContactsDetailsFromContacts(out var contactName, out var contactDetails, fileDataLine, DELIMITER);
+
+                    var addressData = contactDetails.Split('|');
+
+                    _mailShot.SendPostalMailShot(contactName, addressData[0], addressData[1], addressData[2],addressData[3],addressData[4]);
+                }
             }
 
-            reader.Close();
         }
     }
 }
